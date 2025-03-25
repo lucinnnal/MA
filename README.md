@@ -1,7 +1,7 @@
 아래대로 파일 옮기기 및 터미널 실행하면 됩니다
 
 # 1. Pre-trained 가중치 파일 불러오기
-다인이가 구글 드라이브에 올린거 다운 받아서 여기 git clone한 폴더 안에 집어 넣기
+다인이가 구글 드라이브에 올린거 다운 받아서 여기 git clone한 폴더 안에 집어 넣기 : https://drive.google.com/drive/u/0/folders/1NKB6G-R1yBeXEsMqyePjAMES0BeONN-L 
 
 # 2. conda 가상환경 생성 및 필요한 패키지 설치
 conda create --name openmmlab python=3.8 -y
