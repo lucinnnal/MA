@@ -2,11 +2,17 @@
 
 # conda 가상환경 생성 및 필요한 패키지 설치
 conda create --name openmmlab python=3.8 -y
+#
 conda activate openmmlab
+#
 conda install conda-forge::mmcv-full
+#
 conda install pytorch==1.12.1
+#
 conda install torchvision==0.13.1
+#
 conda install scipy
+#
 conda install einops
 
 # 경로 이동
