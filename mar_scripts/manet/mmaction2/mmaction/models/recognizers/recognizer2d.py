@@ -10,15 +10,12 @@ from .base import BaseRecognizer
 class Recognizer2D(BaseRecognizer):
     """2D recognizer model framework."""
 
-    def forward_train(self, imgs, labels,embs_la, **kwargs):
+    def forward_train(self, imgs, **kwargs):
         """Defines the computation performed at every call when training."""
 
-        assert self.with_cls_head
         batches = imgs.shape[0]
         imgs = imgs.reshape((-1, ) + imgs.shape[2:])
         num_segs = imgs.shape[0] // batches
-
-        losses = dict()
 
         x = self.extract_feat(imgs)
 
@@ -29,23 +26,9 @@ class Recognizer2D(BaseRecognizer):
             x = x.reshape((x.shape[0], -1))
             x = x.reshape(x.shape + (1, 1))
 
-        if self.with_neck:
-            x = [
-                each.reshape((-1, num_segs) +
-                             each.shape[1:]).transpose(1, 2).contiguous()
-                for each in x
-            ]
-            x, loss_aux = self.neck(x, labels.squeeze())
-            x = x.squeeze(2)
-            num_segs = 1
-            losses.update(loss_aux)
-
         cls_score,emb_score = self.cls_head(x, num_segs)#8,59   8,300
-        gt_labels = labels.squeeze()#8
-        loss_cls = self.cls_head.loss(cls_score, emb_score,gt_labels,embs_la, **kwargs)#在base的loss里面
-        losses.update(loss_cls)
 
-        return losses
+        return cls_score
 
     def _do_test(self, imgs,labels,embs_la):
         """Defines the computation performed at every call when evaluation,

@@ -8,7 +8,6 @@ from torch.utils import checkpoint as cp
 from ...utils import get_root_logger
 from ..builder import BACKBONES
 
-
 class BasicBlock(nn.Module):
     """Basic block for ResNet.
 

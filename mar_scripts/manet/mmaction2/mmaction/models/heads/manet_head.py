@@ -1,6 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from mmcv.cnn import normal_init
 
 from ..builder import HEADS
@@ -113,4 +114,4 @@ class MANetHead(BaseHead):
                             emb_score.size()[1:])
         cls_score = self.consensus(cls_score)
         emb_score = self.consensus(emb_score)
-        return cls_score.squeeze(1),emb_score.squeeze(1)
+        return F.sigmoid(cls_score.squeeze(1)),emb_score.squeeze(1)
