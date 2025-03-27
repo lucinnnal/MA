@@ -114,4 +114,4 @@ class MANetHead(BaseHead):
                             emb_score.size()[1:])
         cls_score = self.consensus(cls_score)
         emb_score = self.consensus(emb_score)
-        return F.sigmoid(cls_score.squeeze(1)),emb_score.squeeze(1)
+        return torch.sigmoid(cls_score.squeeze(1)),emb_score.squeeze(1)

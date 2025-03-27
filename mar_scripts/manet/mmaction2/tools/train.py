@@ -120,7 +120,9 @@ def main():
     
     # 수정 후 모델
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model.to(device)
+    # train mode
+    model.train()
+    
 
     # Freezing
     for name, param in model.named_parameters():
@@ -131,8 +133,10 @@ def main():
     print("freezed except the head classifier")
 
     # Freeze 잘 되었는지 확인
+    """
     for name, param in model.named_parameters():
         print(f"{name}: requires_grad={param.requires_grad}")
+    """
 
     # dummy data x = torch.randint(0, 256, (1, 8, 3, 224, 224), dtype=torch.uint8)
 
@@ -156,24 +160,38 @@ def main():
 
     print("<Start Training>")
 
+    best_accuracy = 0.0
+
     for epoch in range(num_epochs):
         print(f"=========================epoch{epoch+1}================================")
+
+        correct = 0
+        total = 0
+
         for batch, target in train_dataloader:
             optimizer.zero_grad() 
             outputs = model(batch)
             target = target.float()
+
             loss = loss_function(outputs, target) 
             loss.backward()
             optimizer.step()
+
+            predicted = (outputs > 0.5).float()
+            correct += (predicted == target).sum().item()
+            total += target.shape[0]
         
         scheduler.step() 
 
+        current_accuracy = correct / total
+    
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss : {loss.item()}, ACC : {round(current_accuracy * 100, 3)}% LR: {optimizer.param_groups[0]['lr']:.6f}")
 
-        # Validation code
-        """"""
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss : {loss.item()}, LR: {optimizer.param_groups[0]['lr']:.6f}")
-        print(f"Saving model at {epoch+1}th epoch")
-        torch.save(model.state_dict(), f"./model{epoch+1}.pth")
+        # if the accuracy of current epoch exceeds the best accuracy, save model
+        if current_accuracy > best_accuracy:
+            best_accuracy = current_accuracy
+            print(f"updated best accuracy: {round(best_accuracy * 100,3)}, saving model")
+            torch.save(model.state_dict(), "./best_model.pth")       
 
     print("Train Finished")
 

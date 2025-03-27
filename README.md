@@ -70,5 +70,8 @@ conda install einops
 # 3. 경로 이동
 cd mar_scripts/manet/mmaction2
 
-# 4. 코드실행 : 일단 더미 데이터 넣어봤고 모델 pretrain 로드까지만 시켰음!(모델이 Sigmoid값까지 추가하게 해놨으니까 따로 안붙여도 됌)
+# 4. train.py 코드 실행 : 일단 더미 데이터 넣어봤고 모델 pretrain 로드까지만 시켰음!(모델이 Sigmoid값까지 추가하게 해놨으니까 따로 안붙여도 됌)
 python tools/train.py configs/recognition/manet/manet.py --epoch 5 --lr 1e-3 --batch_size 4
+
+# 5. test.py 코드 실행 
+python tools/test.py configs/recognition/manet/manet.py --checkpoint"/mar_scripts/manet/pretrained_weights.pth"
