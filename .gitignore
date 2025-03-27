@@ -1,1 +1,4 @@
 /mar_scripts/manet/pretrained_weights.pth
+/mar_scripts/manet/mmaction2/data/ma52/videos_train
+/mar_scripts/manet/mmaction2/data/ma52/videos_test
+/mar_scripts/manet/mmaction2/data/ma52/videos_val

@@ -25,7 +25,6 @@ DATASETS = Registry('dataset')
 PIPELINES = Registry('pipeline')
 BLENDINGS = Registry('blending')
 
-
 def build_dataset(cfg, default_args=None):
     """Build a dataset from config dict.
 
@@ -39,7 +38,6 @@ def build_dataset(cfg, default_args=None):
     """
     dataset = build_from_cfg(cfg, DATASETS, default_args)
     return dataset
-
 
 def build_dataloader(dataset,
                      videos_per_gpu,

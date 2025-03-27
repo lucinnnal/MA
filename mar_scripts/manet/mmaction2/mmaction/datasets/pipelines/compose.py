@@ -50,7 +50,7 @@ class Compose:
             data = t(data)
             if data is None:
                 return None
-        return data
+        return data['imgs'], data['label']
 
     def __repr__(self):
         format_string = self.__class__.__name__ + '('

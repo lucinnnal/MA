@@ -37,7 +37,7 @@ class VideoDataset(BaseDataset):
     """
 
     def __init__(self, ann_file, pipeline, start_index=0, **kwargs):
-        self.embeddings=np.load("/chenguoliang/code/mmaction2/manet/1214_new_mean_Vectors.npy")
+        self.embeddings=np.load("/Users/kipyokim/Desktop/Micro-Action/mar_scripts/manet/mmaction2/manet/1214_new_mean_Vectors.npy")
         super().__init__(ann_file, pipeline, start_index=start_index, **kwargs)
         
 

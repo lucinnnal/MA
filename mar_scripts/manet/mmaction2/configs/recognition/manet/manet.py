@@ -18,12 +18,12 @@ img_norm_cfg = dict(
     to_bgr=False)
 
 train_pipeline = [
-    dict(type='DecordInit'),
+    dict(type='OpenCVInit'),
     dict(type='SampleFrames', 
          clip_len=1,
          frame_interval=1,
          num_clips=8),
-    dict(type='DecordDecode'),
+    dict(type='OpenCVDecode'),
     dict(type='Resize', 
          scale=(-1, 256)),
     dict(

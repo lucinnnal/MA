@@ -3,6 +3,8 @@ import argparse
 import copy
 import torch
 from torch import nn
+import torch.optim as optim
+from torch.optim.lr_scheduler import MultiStepLR
 import os
 import os.path as osp
 import time
@@ -11,6 +13,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # import mmcv
+from torch.utils.data import DataLoader
 import torch.backends.cudnn as cudnn
 import torch.distributed as dist
 from mmcv import Config, DictAction,mkdir_or_exist
@@ -19,7 +22,7 @@ from mmcv.utils import get_git_hash
 
 from mmaction import __version__
 from mmaction.apis import init_random_seed, train_model
-from mmaction.datasets import build_dataset
+from mmaction.datasets import build_dataset, build_dataloader
 from mmaction.models import build_model
 from mmaction.utils import (collect_env, get_root_logger,
                             register_module_hooks, setup_multi_processes)
@@ -28,6 +31,9 @@ from mmaction.utils import (collect_env, get_root_logger,
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a recognizer')
     parser.add_argument('config', help='train config file path')
+    parser.add_argument('--epoch', type = int, default = 5)
+    parser.add_argument('--lr', type = float, default = 1e-3)
+    parser.add_argument('--batch_size', type = int, default = 4)
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument('--task_name', type=str, default='formal')
     parser.add_argument(
@@ -128,11 +134,48 @@ def main():
     for name, param in model.named_parameters():
         print(f"{name}: requires_grad={param.requires_grad}")
 
-    x = torch.randint(0, 256, (1, 8, 3, 224, 224), dtype=torch.uint8)
-    x = x.float()
-    x.to(device)
-    result = model(x)
-    print(result)
+    # dummy data x = torch.randint(0, 256, (1, 8, 3, 224, 224), dtype=torch.uint8)
+
+    train_dataset = build_dataset(cfg.data.train)
+    frames, label = train_dataset[0]
+
+    print(f"img tensor index 1 : {frames.shape}")
+    print(f"label tensro index 1 : {label.dtype}")
+    train_dataloader = DataLoader(train_dataset, batch_size = 4, shuffle = True)
+
+    batch_frames, batch_label = next(iter(train_dataloader))
+
+    print(f"batch img tensor index 1 : {batch_frames.shape}")
+    print(f"batch label tensro index 1 : {batch_label.shape}")
+
+    # Training Hyperparameter + Optimizer
+    optimizer = optim.SGD(model.parameters(), lr = 0.001, momentum=0.9, weight_decay=1e-4)
+    scheduler = MultiStepLR(optimizer, milestones=[2, 5], gamma=0.1)
+    loss_function = nn.BCELoss()
+    num_epochs = args.epoch
+
+    print("<Start Training>")
+
+    for epoch in range(num_epochs):
+        print(f"=========================epoch{epoch+1}================================")
+        for batch, target in train_dataloader:
+            optimizer.zero_grad() 
+            outputs = model(batch)
+            target = target.float()
+            loss = loss_function(outputs, target) 
+            loss.backward()
+            optimizer.step()
+        
+        scheduler.step() 
+
+
+        # Validation code
+        """"""
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss : {loss.item()}, LR: {optimizer.param_groups[0]['lr']:.6f}")
+        print(f"Saving model at {epoch+1}th epoch")
+        torch.save(model.state_dict(), f"./model{epoch+1}.pth")
+
+    print("Train Finished")
 
 if __name__ == '__main__':
     main()
