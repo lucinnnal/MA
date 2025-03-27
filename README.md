@@ -41,7 +41,7 @@ train_pipeline = [
 3) 반환값 수정 : /Micro-Action/mar_scripts/manet/mmaction2/mmaction/datasets/pipelines/compose.py 
 해야할 것 : 53줄에서 return data => return data['imgs'], data['label']
 
-# 파일 경로 정보 + 라벨링 정보 입력
+# 파일 경로 정보 + 라벨링 정보 입력 (바꿔놔서 이부분도 넘어가도 됩니다.)
 "/Micro-Action/mar_scripts/manet/mmaction2/data/ma52/train_list_videos.txt" 에 파일 경로 정보와 라벨링 정보 입력(bad : 0, good : 1) 
 
 예시 형식)"Y1qDNTG9lg0_014.mp4 0"
